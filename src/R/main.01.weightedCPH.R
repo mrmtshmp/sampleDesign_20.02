@@ -1,4 +1,4 @@
-#' Weighted logistec regression.
+#' Weighted Cox proportional hazard regression.
 #' 2020/10/16
 
 Bibtex <- TRUE
@@ -412,7 +412,46 @@ ggplot(
   theme_bw() + theme(legend.key = element_blank())
 dev.off()
 
+#' Treatment effect infference.
+#'
 
+df.working_data_completed.propensityScores_IPW$time <-
+  df.working_data_completed.propensityScores_IPW[,var.cens_timetoevent]
+
+df.working_data_completed.propensityScores_IPW$event <-
+  as.numeric(
+    as.character(
+      factor(
+        df.working_data_completed.propensityScores_IPW[,var.event],
+        c("censored","event"),
+        c(0,1)
+        )
+      )
+    )
+
+df.working_data_completed.propensityScores_IPW$exposure <-
+    df.working_data_completed.propensityScores_IPW[,var.exposure]
+
+res.svydesign.w_ato <- 
+  survey::svydesign(
+    ids = ~ 1, 
+    data =
+      df.working_data_completed.propensityScores_IPW[
+        !is.na(df.working_data_completed.propensityScores_IPW$propensity_score),
+        ],
+    weights = ~ w_ato
+    )
+
+svy.cox.fit <- 
+  svycoxph(
+    formula = 
+      Surv(
+        time = time,
+        event= event
+        ) ~ exposure,
+    x = TRUE, 
+    design = res.svydesign.w_ato
+    )
 
 res.coxph.Weighted <-
   coxph(
@@ -438,8 +477,8 @@ res.coxph.Weighted <-
         ]
     )
 
-sink("output/res.CoxPH.txt")
-summary(res.coxph.Weighted)
+sink("output/res.survey_CoxPH.txt")
+summary(svy.cox.fit)
 sink()
 
 #```
