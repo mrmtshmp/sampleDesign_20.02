@@ -6,3 +6,9 @@
 output
 note
 biblio
+*.pdf
+*.doc
+*.docx
+*.csv
+*.xlsx
+*.xls
