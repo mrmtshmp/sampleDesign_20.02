@@ -1,4 +1,4 @@
-# Kaplain-Meyer curve.<<JCS>> ----------
+# Kaplan-Meier curve.<<JCS>> ----------
 
 # df.working_data_completed.propensityScores_IPW$jcs_num <-
 #   nchar(gsub('(^[0-9]{1,3}).+','\\1',df.working_data_completed.propensityScores_IPW$jcs))
